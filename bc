@@ -1,0 +1,7 @@
+string
+hash of the current node and previous node
+link to previous node
+link to next node
+
+put()
+retrieve()
