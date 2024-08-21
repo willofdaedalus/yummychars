@@ -1,33 +1,11 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
 	"willofdaedalus/yummychars/serpent"
-
-	"golang.org/x/term"
 )
-
-func cleanUp(fd int, orig *term.State) {
-	term.Restore(fd, orig)
-	// ensure the cursor is shown again when the program exits
-	fmt.Print("\033[?25h") 
-}
-
-func setupTerminal() (*term.State, int, error) {
-	fmt.Printf("\033[2J\033[H")
-	fmt.Print("\033[?25l")
-	fd := int(os.Stdin.Fd())
-
-	oldState, err := term.MakeRaw(fd)
-	if err != nil {
-		return nil, -1, err
-	}
-
-	return oldState, fd, nil
-}
 
 func main() {
 	oldState, fd, err := setupTerminal()
@@ -36,13 +14,18 @@ func main() {
 	}
 	defer cleanUp(fd, oldState)
 
+	// get and spawn snake at cursor location
+	// r, c, err := getCursorPosition()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+
 	dir := serpent.RIGHT
-	s := serpent.InitSnake(5)
+	s := serpent.InitSnake(5, 0, 0)
 	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
 	for {
-		// non-blocking input with a goroutine
 		go func() {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {
@@ -52,13 +35,21 @@ func main() {
 
 		switch buf[0] {
 		case 'w':
-			dir = serpent.UP
+			if s.MoveDir != serpent.DOWN {
+				dir = serpent.UP
+			}
 		case 'a':
-			dir = serpent.LEFT
+			if s.MoveDir != serpent.RIGHT {
+				dir = serpent.LEFT
+			}
 		case 's':
-			dir = serpent.DOWN
+			if s.MoveDir != serpent.UP {
+				dir = serpent.DOWN
+			}
 		case 'd':
-			dir = serpent.RIGHT
+			if s.MoveDir != serpent.LEFT {
+				dir = serpent.RIGHT
+			}
 		case 'q':
 			s.ClearScreen()
 			return

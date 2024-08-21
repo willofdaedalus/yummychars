@@ -1,6 +1,9 @@
 package serpent
 
-import "fmt"
+import (
+	"fmt"
+	// "atomicgo.dev/cursor"
+)
 
 const (
 	UP = iota
@@ -22,16 +25,17 @@ type coords struct {
 }
 
 type Snake struct {
+	MoveDir int
 	Head     rune
 	Position coords
 	Speed    float64
 	Tail     []string
 }
 
-func InitSnake(speed float64) *Snake {
+func InitSnake(speed float64, x, y int) *Snake {
 	return &Snake{
-		Head: HEAD_R,
-		Position: coords{0, 0},
+		Head:     HEAD_R,
+		Position: coords{x, y},
 		Speed:    speed,
 		Tail:     make([]string, 0),
 	}
@@ -42,15 +46,19 @@ func (s *Snake) MoveSnake(dir int) {
 	case UP:
 		s.Position.Y -= 1
 		s.Head = HEAD_U
+		s.MoveDir = UP
 	case DOWN:
 		s.Position.Y += 1
 		s.Head = HEAD_D
+		s.MoveDir = DOWN
 	case LEFT:
 		s.Position.X -= 1
 		s.Head = HEAD_L
+		s.MoveDir = LEFT
 	case RIGHT:
 		s.Position.X += 1
 		s.Head = HEAD_R
+		s.MoveDir = RIGHT
 	}
 }
 
@@ -61,4 +69,7 @@ func (s *Snake) ClearScreen() {
 func (s *Snake) DrawSnake() {
 	// apparently the format is actually (y, x) and not (x, y)
 	fmt.Printf("\033[%d;%dH%c", s.Position.Y, s.Position.X, s.Head)
+	// moving back to ansi codes might consider this in the future
+	// cursor.Move(s.Position.X, s.Position.Y)
+	// fmt.Printf("%c", s.Head)
 }
