@@ -16,14 +16,23 @@ func cleanUp(fd int, orig *term.State) {
 	fmt.Print("\033[?25h") 
 }
 
-func main() {
+func setupTerminal() (*term.State, int, error) {
 	fmt.Printf("\033[2J\033[H")
 	fmt.Print("\033[?25l")
 	fd := int(os.Stdin.Fd())
 
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
-		log.Fatal("error occured putting terminal in raw mode\n")
+		return nil, -1, err
+	}
+
+	return oldState, fd, nil
+}
+
+func main() {
+	oldState, fd, err := setupTerminal()
+	if err != nil {
+		log.Fatal(err)
 	}
 	defer cleanUp(fd, oldState)
 
