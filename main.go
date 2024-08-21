@@ -21,7 +21,7 @@ func main() {
 	// }
 
 	dir := serpent.RIGHT
-	s := serpent.InitSnake(5, 0, 0)
+	s := serpent.InitSnake(10, 0, 0)
 	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
