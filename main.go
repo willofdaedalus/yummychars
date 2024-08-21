@@ -69,5 +69,8 @@ func main() {
 		// add a short sleep to control the loop speed
 		// this isn't the best but it works; might come back this
 		time.Sleep(time.Second / time.Duration(s.Speed))
+
+		// clear the previous frames to remove smears
+		s.ClearScreen()
 	}
 }
