@@ -10,18 +10,25 @@ import (
 	"golang.org/x/term"
 )
 
+func cleanUp(fd int, orig *term.State) {
+	term.Restore(fd, orig)
+	// ensure the cursor is shown again when the program exits
+	fmt.Print("\033[?25h") 
+}
+
 func main() {
 	fmt.Printf("\033[2J\033[H")
+	fmt.Print("\033[?25l")
 	fd := int(os.Stdin.Fd())
 
 	oldState, err := term.MakeRaw(fd)
 	if err != nil {
 		log.Fatal("error occured putting terminal in raw mode\n")
 	}
-	defer term.Restore(fd, oldState)
+	defer cleanUp(fd, oldState)
 
 	dir := serpent.RIGHT
-	s := serpent.InitSnake(1)
+	s := serpent.InitSnake(5)
 	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
@@ -30,9 +37,6 @@ func main() {
 		go func() {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {
-				if os.IsTimeout(err) {
-					return
-				}
 				log.Fatal(err)
 			}
 		}()
@@ -47,7 +51,7 @@ func main() {
 		case 'd':
 			dir = serpent.RIGHT
 		case 'q':
-			fmt.Printf("\033[2J\033[H")
+			s.ClearScreen()
 			return
 		}
 		s.MoveSnake(dir)

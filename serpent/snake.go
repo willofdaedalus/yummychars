@@ -9,7 +9,10 @@ const (
 	RIGHT
 )
 
-const HEAD = ">"
+const (
+	HEAD = ">"
+	BODY = "o"
+)
 
 type coords struct {
 	X, Y int
@@ -42,6 +45,10 @@ func (s *Snake) MoveSnake(dir int) {
 	}
 }
 
+func (s *Snake) ClearScreen() {
+	fmt.Printf("\033[2J\033[H")
+}
+
 func (s *Snake) DrawSnake() {
-	fmt.Printf("x: %d, y: %d", s.Position.X, s.Position.Y)
+	fmt.Printf("\033[%d;%dHo", s.Position.Y, s.Position.X)
 }
