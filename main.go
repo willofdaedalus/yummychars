@@ -11,15 +11,10 @@ import (
 )
 
 func main() {
-	// data, err := setupContent()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-		content, err := setupContent()
-		if err != nil {
-			log.Fatal(err)
-		}
-
+	content, err := setupContent()
+	if err != nil {
+		log.Fatal(err)
+	}
 
 	oldState, fd, err := setupTerminal()
 	if err != nil {
@@ -32,14 +27,15 @@ func main() {
 	}
 	defer cleanUp(fd, oldState)
 
-	dir := serpent.RIGHT
 	s := serpent.InitSnake(10, 5, sx, sy)
+	s.TermContent = content
+	dir := serpent.RIGHT
 	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
 	for {
 		// Draw the captured content
-		for y, line := range content {
+		for y, line := range s.TermContent {
 			fmt.Printf("\033[%d;1H%s", y+1, string(line))
 		}
 

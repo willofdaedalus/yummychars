@@ -24,21 +24,22 @@ type coords struct {
 }
 
 type Snake struct {
-	MoveDir  int
-	Speed    float64
-	head     rune
-	position coords
-	fieldSize coords
-	tail     []coords
+	MoveDir     int
+	Speed       float64
+	TermContent [][]rune
+	head        rune
+	position    coords
+	fieldSize   coords
+	tail        []coords
 }
 
 func InitSnake(speed float64, length, fx, fy int) *Snake {
 	// initialize snake with the head position and an empty tail
 	return &Snake{
-		head:     HEAD_R,
-		position: coords{0, 0},
-		Speed:    speed,
-		tail:     make([]coords, length), // make tail with a length of 4
+		head:      HEAD_R,
+		position:  coords{0, 0},
+		Speed:     speed,
+		tail:      make([]coords, length), // make tail with a length of 4
 		fieldSize: coords{fx, fy},
 	}
 }
@@ -72,6 +73,11 @@ func (s *Snake) MoveSnake(dir int) {
 	}
 
 	s.MoveDir = dir
+
+	if (s.position.y >= 0 && s.position.y < len(s.TermContent)) &&
+		(s.position.x >= 0 && s.position.x < len(s.TermContent[s.position.y])) {
+		s.TermContent[s.position.y][s.position.x] = ' '
+	}
 }
 
 func (s *Snake) ClearScreen() {
@@ -79,7 +85,8 @@ func (s *Snake) ClearScreen() {
 }
 
 func (s *Snake) CheckBoundaries() bool {
-	if (s.position.x > s.fieldSize.x || s.position.x < 0) || (s.position.y > s.fieldSize.y || s.position.y < 0) {
+	if (s.position.x > s.fieldSize.x || s.position.x < 0) ||
+		(s.position.y > s.fieldSize.y || s.position.y < 0) {
 		s.ClearScreen()
 		fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "game over!")
 		return true
@@ -96,4 +103,3 @@ func (s *Snake) DrawSnake() {
 		fmt.Printf("\033[%d;%dH%c", segment.y, segment.x, BODY)
 	}
 }
-
