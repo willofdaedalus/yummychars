@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -10,6 +11,16 @@ import (
 )
 
 func main() {
+	// data, err := setupContent()
+	// if err != nil {
+	// 	log.Fatal(err)
+	// }
+		content, err := setupContent()
+		if err != nil {
+			log.Fatal(err)
+		}
+
+
 	oldState, fd, err := setupTerminal()
 	if err != nil {
 		log.Fatal(err)
@@ -27,6 +38,11 @@ func main() {
 
 	buf := make([]byte, 1)
 	for {
+		// Draw the captured content
+		for y, line := range content {
+			fmt.Printf("\033[%d;1H%s", y+1, string(line))
+		}
+
 		go func() {
 			_, err := os.Stdin.Read(buf)
 			if err != nil {

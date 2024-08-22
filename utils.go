@@ -4,6 +4,7 @@ import (
 	// "atomicgo.dev/cursor"
 	"fmt"
 	"os"
+	"os/exec"
 	"strconv"
 	"strings"
 
@@ -28,6 +29,38 @@ func setupTerminal() (*term.State, int, error) {
 
 	return oldState, fd, nil
 }
+
+func setupContent() ([][]rune, error) {
+	cmd := exec.Command("tmux", "capture-pane", "-e", "-p")
+	out, err := cmd.Output()
+	if err != nil {
+		return nil, err
+	}
+
+	paneOut := string(out)
+	lines := strings.Split(paneOut, "\n")
+	if len(lines) == 0 {
+		return nil, fmt.Errorf("nothing was read")
+	}
+
+	parsedData := make([][]rune, len(lines))
+
+	for i, line := range lines {
+		parsedData[i] = []rune(line)
+	}
+
+	return parsedData, nil
+}
+
+// func setupContent() (string) {
+// 	cmd := exec.Command("tmux", "capture-pane", "-p", "-e")
+// 	out, err := cmd.Output()
+// 	if err != nil {
+// 		return ""
+// 	}
+//
+// 	return string(out)
+// }
 
 func getCursorPosition() (int, int, error) {
 	fmt.Print("\033[6n")
