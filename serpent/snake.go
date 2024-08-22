@@ -20,52 +20,55 @@ const (
 )
 
 type coords struct {
-	X, Y int
+	x, y int
 }
 
 type Snake struct {
 	MoveDir  int
-	Head     rune
-	Position coords
 	Speed    float64
-	Tail     []coords
+	head     rune
+	position coords
+	fieldSize coords
+	tail     []coords
 }
 
-func InitSnake(speed float64, x, y int) *Snake {
-	// Initialize snake with the head position and an empty tail
+func InitSnake(speed float64, length, fx, fy int) *Snake {
+	// initialize snake with the head position and an empty tail
 	return &Snake{
-		Head:     HEAD_R,
-		Position: coords{x, y},
+		head:     HEAD_R,
+		position: coords{0, 0},
 		Speed:    speed,
-		Tail:     make([]coords, 4), // Make tail with a length of 4
+		tail:     make([]coords, length), // make tail with a length of 4
+		fieldSize: coords{fx, fy},
 	}
 }
 
 func (s *Snake) MoveSnake(dir int) {
-	// move the tail segments
-	for i := len(s.Tail) - 1; i > 0; i-- {
-		s.Tail[i] = s.Tail[i-1]
+	// basically move all segments but the first at the position of the one
+	// infront of it and only update the first segment to the head's position
+	for i := len(s.tail) - 1; i > 0; i-- {
+		s.tail[i] = s.tail[i-1]
 	}
 
 	// move the first tail segment to the previous position of the head
-	if len(s.Tail) > 0 {
-		s.Tail[0] = s.Position
+	if len(s.tail) > 0 {
+		s.tail[0] = s.position
 	}
 
 	// move the head based on direction
 	switch dir {
 	case UP:
-		s.Position.Y -= 1
-		s.Head = HEAD_U
+		s.position.y -= 1
+		s.head = HEAD_U
 	case DOWN:
-		s.Position.Y += 1
-		s.Head = HEAD_D
+		s.position.y += 1
+		s.head = HEAD_D
 	case LEFT:
-		s.Position.X -= 1
-		s.Head = HEAD_L
+		s.position.x -= 1
+		s.head = HEAD_L
 	case RIGHT:
-		s.Position.X += 1
-		s.Head = HEAD_R
+		s.position.x += 1
+		s.head = HEAD_R
 	}
 
 	s.MoveDir = dir
@@ -75,13 +78,22 @@ func (s *Snake) ClearScreen() {
 	fmt.Printf("\033[2J\033[H")
 }
 
-func (s *Snake) DrawSnake() {
-	// Draw the head of the snake
-	fmt.Printf("\033[%d;%dH%c", s.Position.Y, s.Position.X, s.Head)
+func (s *Snake) CheckBoundaries() bool {
+	if (s.position.x > s.fieldSize.x || s.position.x < 0) || (s.position.y > s.fieldSize.y || s.position.y < 0) {
+		s.ClearScreen()
+		fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "game over!")
+		return true
+	}
 
-	// Draw the tail of the snake
-	for _, segment := range s.Tail {
-		fmt.Printf("\033[%d;%dH%c", segment.Y, segment.X, BODY)
+	return false
+}
+
+func (s *Snake) DrawSnake() {
+	// draw the head of the snake
+	fmt.Printf("\033[%d;%dH%c", s.position.y, s.position.x, s.head)
+	// draw the tail of the snake
+	for _, segment := range s.tail {
+		fmt.Printf("\033[%d;%dH%c", segment.y, segment.x, BODY)
 	}
 }
 

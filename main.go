@@ -5,6 +5,8 @@ import (
 	"os"
 	"time"
 	"willofdaedalus/yummychars/serpent"
+
+	"golang.org/x/term"
 )
 
 func main() {
@@ -12,16 +14,15 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+	// use the size of the terminal to determine the boundaries for the snake
+	sx, sy, err := term.GetSize(fd)
+	if err != nil {
+		log.Fatal(err)
+	}
 	defer cleanUp(fd, oldState)
 
-	// get and spawn snake at cursor location
-	// r, c, err := getCursorPosition()
-	// if err != nil {
-	// 	log.Fatal(err)
-	// }
-
 	dir := serpent.RIGHT
-	s := serpent.InitSnake(10, 0, 0)
+	s := serpent.InitSnake(10, 5, sx, sy)
 	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
@@ -56,6 +57,12 @@ func main() {
 		}
 		s.MoveSnake(dir)
 		s.DrawSnake()
+		// exit the game when the snake collides with the edges
+		if s.CheckBoundaries() {
+			time.Sleep(time.Second * 2)
+			s.ClearScreen()
+			break
+		}
 
 		// add a short sleep to control the loop speed
 		// this isn't the best but it works; might come back this
