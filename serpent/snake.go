@@ -27,32 +27,29 @@ type Snake struct {
 	MoveDir     int
 	Speed       float64
 	TermContent [][]rune
+
 	head        rune
+	actualChars [][]rune
 	position    coords
 	fieldSize   coords
 	tail        []coords
 }
 
-func InitSnake(speed float64, length, fx, fy int) *Snake {
+func InitSnake(speed float64, length, fx, fy int, rawContent [][]rune) *Snake {
 	// initialize snake with the head position and an empty tail
 	return &Snake{
-		head:      HEAD_R,
-		position:  coords{0, 0},
-		Speed:     speed,
-		tail:      make([]coords, length), // make tail with a length of 4
-		fieldSize: coords{fx, fy},
+		head:        HEAD_R,
+		position:    coords{0, 0},
+		Speed:       speed,
+		tail:        make([]coords, length), // make tail with a length of 4
+		fieldSize:   coords{fx, fy},
+		TermContent: rawContent,
+		actualChars: stripAnsiCodes(rawContent),
 	}
 }
 
 func (s *Snake) ClearScreen() {
 	fmt.Printf("\033[2J\033[H")
-}
-
-func (s *Snake) DrawScreenContent() {
-	// Draw the captured terminal content
-	for y, line := range s.TermContent {
-		fmt.Printf("\033[%d;1H%s", y+1, string(line))
-	}
 }
 
 func (s *Snake) CheckBoundaries() bool {
@@ -95,10 +92,40 @@ func (s *Snake) MoveSnake(dir int) {
 
 	s.MoveDir = dir
 
-	// "Eat" the character at the new position if it's not empty
-	if s.position.y >= 0 && s.position.y < len(s.TermContent) &&
-		s.position.x >= 0 && s.position.x < len(s.TermContent[s.position.y]) {
-		s.TermContent[s.position.y][s.position.x] = ' '
+	if s.position.y >= 0 && s.position.y < len(s.actualChars) &&
+		s.position.x >= 0 && s.position.x < len(s.actualChars[s.position.y]) {
+		if s.actualChars[s.position.y][s.position.x] != ' ' {
+			s.actualChars[s.position.y][s.position.x] = ' '
+
+			// Update TermContent to reflect the change
+			s.updateTermContent(s.position.y, s.position.x)
+		}
+	}
+}
+
+func (s *Snake) updateTermContent(y, x int) {
+	actualX := 0
+	inEscapeSeq := false
+	for i := range s.TermContent[y] {
+		if s.TermContent[y][i] == '\033' {
+			inEscapeSeq = true
+		} else if !inEscapeSeq {
+			if actualX == x {
+				s.TermContent[y][i] = ' '
+				return
+			}
+			actualX++
+		} else if (s.TermContent[y][i] >= 'A' && s.TermContent[y][i] <= 'Z') ||
+			(s.TermContent[y][i] >= 'a' && s.TermContent[y][i] <= 'z') {
+			inEscapeSeq = false
+		}
+	}
+}
+
+func (s *Snake) DrawScreenContent() {
+	// Draw the captured terminal content
+	for y, line := range s.TermContent {
+		fmt.Printf("\033[%d;1H%s", y+1, string(line))
 	}
 }
 
@@ -110,4 +137,3 @@ func (s *Snake) DrawSnake() {
 		fmt.Printf("\033[%d;%dH%c", segment.y+1, segment.x+1, BODY)
 	}
 }
-

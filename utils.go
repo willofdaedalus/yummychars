@@ -31,7 +31,7 @@ func setupTerminal() (*term.State, int, error) {
 }
 
 func setupContent() ([][]rune, error) {
-	cmd := exec.Command("tmux", "capture-pane", "-p")
+	cmd := exec.Command("tmux", "capture-pane", "-e", "-p")
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err
@@ -51,16 +51,6 @@ func setupContent() ([][]rune, error) {
 
 	return parsedData, nil
 }
-
-// func setupContent() (string) {
-// 	cmd := exec.Command("tmux", "capture-pane", "-p", "-e")
-// 	out, err := cmd.Output()
-// 	if err != nil {
-// 		return ""
-// 	}
-//
-// 	return string(out)
-// }
 
 func getCursorPosition() (int, int, error) {
 	fmt.Print("\033[6n")

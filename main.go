@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := serpent.InitSnake(10, 5, sx, sy)
+	s := serpent.InitSnake(10, 5, sx, sy, content)
 	s.TermContent = content
 	dir := serpent.RIGHT
 

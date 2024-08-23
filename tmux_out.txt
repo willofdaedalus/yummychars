@@ -1,0 +1,33 @@
+[32m~/projects/golang/yummychars[39m
+> logg
+* [32m975da59[39m [36m(willofdaedalus)[39m - [33mcharacter eating works fine without colours[39m [31mabout 28 minutes ago[39m [1m[32m (HEAD -> dev)[0m
+* [32m9a3cf7f[39m [36m(willofdaedalus)[39m - [33mbasic character eating; not perfect but works[39m [31mabout 10 hours ago[39m
+* [32mb2538d7[39m [36m(willofdaedalus)[39m - [33mcaptured content and snake coexisting[39m [31mabout 11 hours ago[39m
+* [32m24aa856[39m [36m(willofdaedalus)[39m - [33msimple game over[39m [31mabout 15 hours ago[39m [1m[32m (origin/master, origin/dev, master)[0m
+* [32m73061ff[39m [36m(willofdaedalus)[39m - [33mbasic snake movement with segments correctly following[39m [31mabout 33 hours ago[39m
+* [32m69e6b19[39m [36m(willofdaedalus)[39m - [33mfixed bug where user could override direction on the same axis[39m [31mabout 2 days ago[39m
+* [32mb4f472d[39m [36m(willofdaedalus)[39m - [33mscreen clearing to removing frame smearing[39m [31mabout 2 days ago[39m
+* [32m9e71673[39m [36m(willofdaedalus)[39m - [33mhead rendering in the correct direction[39m [31mabout 2 days ago[39m
+* [32mb96ef4b[39m [36m(willofdaedalus)[39m - [33mhide cursor on start and restore on quit[39m [31mabout 2 days ago[39m
+* [32m7ed1b00[39m [36m(willofdaedalus)[39m - [33mnon-blocking input with a goroutine[39m [31mabout 2 days ago[39m
+* [32md08db99[39m [36m(willofdaedalus)[39m - [33mfeat: snake speed works[39m [31mabout 9 days ago[39m
+* [32m983be70[39m [36m(willofdaedalus)[39m - [33minit commit[39m [31mabout 9 days ago[39m
+
+[32m~/projects/golang/yummychars[39m
+> go run .
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
