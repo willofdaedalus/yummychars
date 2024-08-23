@@ -28,6 +28,7 @@ type Snake struct {
 	Speed       float64
 	TermContent [][]rune
 
+	colour      string
 	head        rune
 	actualChars [][]rune
 	position    coords
@@ -64,17 +65,17 @@ func (s *Snake) CheckBoundaries() bool {
 }
 
 func (s *Snake) MoveSnake(dir int) {
-	// Move all segments of the tail except the first one
+	// move all segments of the tail except the first one
 	for i := len(s.tail) - 1; i > 0; i-- {
 		s.tail[i] = s.tail[i-1]
 	}
 
-	// Move the first tail segment to the previous position of the head
+	// move the first tail segment to the previous position of the head
 	if len(s.tail) > 0 {
 		s.tail[0] = s.position
 	}
 
-	// Update the head's position based on direction
+	// update the head's position based on direction
 	switch dir {
 	case UP:
 		s.position.y -= 1
@@ -97,43 +98,25 @@ func (s *Snake) MoveSnake(dir int) {
 		if s.actualChars[s.position.y][s.position.x] != ' ' {
 			s.actualChars[s.position.y][s.position.x] = ' '
 
-			// Update TermContent to reflect the change
+			// update termcontent to reflect the change
 			s.updateTermContent(s.position.y, s.position.x)
 		}
 	}
 }
 
-func (s *Snake) updateTermContent(y, x int) {
-	actualX := 0
-	inEscapeSeq := false
-	for i := range s.TermContent[y] {
-		if s.TermContent[y][i] == '\033' {
-			inEscapeSeq = true
-		} else if !inEscapeSeq {
-			if actualX == x {
-				s.TermContent[y][i] = ' '
-				return
-			}
-			actualX++
-		} else if (s.TermContent[y][i] >= 'A' && s.TermContent[y][i] <= 'Z') ||
-			(s.TermContent[y][i] >= 'a' && s.TermContent[y][i] <= 'z') {
-			inEscapeSeq = false
-		}
-	}
-}
-
 func (s *Snake) DrawScreenContent() {
-	// Draw the captured terminal content
+	// draw the captured terminal content
 	for y, line := range s.TermContent {
 		fmt.Printf("\033[%d;1H%s", y+1, string(line))
 	}
 }
 
 func (s *Snake) DrawSnake() {
-	// Draw the head of the snake
-	fmt.Printf("\033[%d;%dH%c", s.position.y+1, s.position.x+1, s.head)
-	// Draw the tail of the snake
+	// draw the head of the snake with the current colour
+	fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, s.position.y+1, s.position.x+1, s.head)
+
+	// draw the tail of the snake with the current colour
 	for _, segment := range s.tail {
-		fmt.Printf("\033[%d;%dH%c", segment.y+1, segment.x+1, BODY)
+		fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, segment.y+1, segment.x+1, BODY)
 	}
 }
