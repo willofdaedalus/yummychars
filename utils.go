@@ -31,7 +31,7 @@ func setupTerminal() (*term.State, int, error) {
 }
 
 func setupContent() ([][]rune, error) {
-	cmd := exec.Command("tmux", "capture-pane", "-e", "-p")
+	cmd := exec.Command("tmux", "capture-pane", "-p")
 	out, err := cmd.Output()
 	if err != nil {
 		return nil, err

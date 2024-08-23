@@ -1,7 +1,6 @@
 package main
 
 import (
-	"fmt"
 	"log"
 	"os"
 	"time"
@@ -20,24 +19,20 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
-	// use the size of the terminal to determine the boundaries for the snake
+	defer cleanUp(fd, oldState)
+
 	sx, sy, err := term.GetSize(fd)
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer cleanUp(fd, oldState)
 
 	s := serpent.InitSnake(10, 5, sx, sy)
 	s.TermContent = content
 	dir := serpent.RIGHT
-	s.MoveSnake(dir)
 
 	buf := make([]byte, 1)
 	for {
-		// Draw the captured content
-		for y, line := range s.TermContent {
-			fmt.Printf("\033[%d;1H%s", y+1, string(line))
-		}
+		s.DrawScreenContent()
 
 		go func() {
 			_, err := os.Stdin.Read(buf)
@@ -67,20 +62,22 @@ func main() {
 			s.ClearScreen()
 			return
 		}
+
 		s.MoveSnake(dir)
 		s.DrawSnake()
-		// exit the game when the snake collides with the edges
+
+		// Exit the game if the snake collides with the boundaries
 		if s.CheckBoundaries() {
 			time.Sleep(time.Second * 2)
 			s.ClearScreen()
 			break
 		}
 
-		// add a short sleep to control the loop speed
-		// this isn't the best but it works; might come back this
+		// Add a short sleep to control the loop speed
 		time.Sleep(time.Second / time.Duration(s.Speed))
 
-		// clear the previous frames to remove smears
+		// Clear the previous frames to remove smears
 		s.ClearScreen()
 	}
 }
+
