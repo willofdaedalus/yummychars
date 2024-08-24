@@ -2,6 +2,28 @@ package serpent
 
 import "strings"
 
+// func (s *Snake) updateTermContent(y, x int) {
+// 	actualX := 0
+// 	inEscapeSeq := false
+// 	for i := range s.TermContent[y] {
+// 		if s.TermContent[y][i] == '\033' {
+// 			inEscapeSeq = true
+// 		} else if !inEscapeSeq {
+// 			// this conditional ensures we can't override the letters that are
+// 			// part of the escape sequences like the m in \033[36m which is
+// 			// essentially part of the escape sequence and not the underlying text
+// 			if actualX == x {
+// 				s.TermContent[y][i] = ' '
+// 				return
+// 			}
+// 			actualX++
+// 		} else if (s.TermContent[y][i] >= 'A' && s.TermContent[y][i] <= 'Z') ||
+// 			(s.TermContent[y][i] >= 'a' && s.TermContent[y][i] <= 'z') {
+// 			inEscapeSeq = false
+// 		}
+// 	}
+// }
+
 // basically run through the TermContent while checking if the character we're
 // pointing to is part of an escape sequence
 func (s *Snake) updateTermContent(y, x int) {
