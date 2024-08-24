@@ -36,13 +36,14 @@ type Snake struct {
 	tail        []coords
 }
 
-func InitSnake(speed float64, length, fx, fy int, rawContent [][]rune) *Snake {
+func InitSnake(speed float64, fx, fy int, rawContent [][]rune) *Snake {
 	// initialize snake with the head position and an empty tail
 	return &Snake{
 		head:        HEAD_R,
 		position:    coords{0, 0},
 		Speed:       speed,
-		tail:        make([]coords, length), // make tail with a length of 4
+		// make tail with a length of 4 so that I don't have to figure out self collision logic ;P
+		tail:        make([]coords, 4), 
 		fieldSize:   coords{fx, fy},
 		TermContent: rawContent,
 		actualChars: stripAnsiCodes(rawContent),
@@ -53,9 +54,23 @@ func (s *Snake) ClearScreen() {
 	fmt.Printf("\033[2J\033[H")
 }
 
+func (s *Snake) WinConditionLogic() bool {
+	for _, row := range s.actualChars {
+		for _, c := range row {
+			if c != ' ' {
+				return false
+			}
+		}
+	}
+
+	fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "you win!")
+	return true
+}
+
 func (s *Snake) CheckBoundaries() bool {
-	if (s.position.x > s.fieldSize.x || s.position.x < 0) ||
-		(s.position.y > s.fieldSize.y || s.position.y < 0) {
+	// allows the snake move along the boundaries without punishing the player
+	if (s.position.x > s.fieldSize.x + 1 || s.position.x < -1) ||
+		(s.position.y > s.fieldSize.y + 1 || s.position.y < -1) {
 		s.ClearScreen()
 		fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "game over!")
 		return true

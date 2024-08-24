@@ -26,7 +26,7 @@ func main() {
 		log.Fatal(err)
 	}
 
-	s := serpent.InitSnake(10, 5, sx, sy, content)
+	s := serpent.InitSnake(10, sx, sy, content)
 	s.TermContent = content
 	dir := serpent.RIGHT
 
@@ -66,8 +66,9 @@ func main() {
 		s.MoveSnake(dir)
 		s.DrawSnake()
 
-		// Exit the game if the snake collides with the boundaries
-		if s.CheckBoundaries() {
+		// exit the game if the snake collides with the boundaries
+		// don't know if checking the [][]rune every "frame" is efficient
+		if s.CheckBoundaries() || s.WinConditionLogic() {
 			time.Sleep(time.Second * 2)
 			s.ClearScreen()
 			break
