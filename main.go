@@ -1,6 +1,7 @@
 package main
 
 import (
+	"fmt"
 	"log"
 	"os"
 	"time"
@@ -10,23 +11,50 @@ import (
 	"golang.org/x/term"
 )
 
+var (
+	content    [][]rune
+	oldState   *term.State
+	sx, sy, fd int
+	err        error
+)
+
 func main() {
-	content, err := utils.SetupContent()
+	if len(os.Args) <= 1 {
+		fmt.Println("please provide an argument. see help")
+		return
+	}
+	content, err = utils.SetupContent()
 	if err != nil {
 		log.Fatal(err)
 	}
-
-	oldState, fd, err := utils.SetupTerminal()
+	oldState, fd, err = utils.SetupTerminal()
+	if err != nil {
+		log.Fatal(err)
+	}
+	sx, sy, err = term.GetSize(fd)
 	if err != nil {
 		log.Fatal(err)
 	}
 	defer utils.CleanUp(fd, oldState)
 
-	sx, sy, err := term.GetSize(fd)
+	game, err := initApp(os.Args[1])
 	if err != nil {
 		log.Fatal(err)
 	}
 
+	game()
+}
+
+func initApp(cmd string) (func(), error) {
+	switch cmd {
+	case "snake":
+		return snakeEnvironment, nil
+	}
+
+	return nil, fmt.Errorf("your command %s is not known. see help")
+}
+
+func snakeEnvironment() {
 	s := serpent.InitSnake(10, sx, sy, content)
 	s.TermContent = content
 	dir := serpent.RIGHT
