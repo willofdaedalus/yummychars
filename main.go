@@ -5,21 +5,22 @@ import (
 	"os"
 	"time"
 	"willofdaedalus/yummychars/serpent"
+	"willofdaedalus/yummychars/utils"
 
 	"golang.org/x/term"
 )
 
 func main() {
-	content, err := setupContent()
+	content, err := utils.SetupContent()
 	if err != nil {
 		log.Fatal(err)
 	}
 
-	oldState, fd, err := setupTerminal()
+	oldState, fd, err := utils.SetupTerminal()
 	if err != nil {
 		log.Fatal(err)
 	}
-	defer cleanUp(fd, oldState)
+	defer utils.CleanUp(fd, oldState)
 
 	sx, sy, err := term.GetSize(fd)
 	if err != nil {

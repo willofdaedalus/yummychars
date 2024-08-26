@@ -1,4 +1,4 @@
-package main
+package utils
 
 import (
 	// "atomicgo.dev/cursor"
@@ -11,13 +11,13 @@ import (
 	"golang.org/x/term"
 )
 
-func cleanUp(fd int, orig *term.State) {
+func CleanUp(fd int, orig *term.State) {
 	term.Restore(fd, orig)
 	// ensure the cursor is shown again when the program exits
 	fmt.Print("\033[?25h")
 }
 
-func setupTerminal() (*term.State, int, error) {
+func SetupTerminal() (*term.State, int, error) {
 	fmt.Printf("\033[2J\033[H") // clear screen
 	fmt.Print("\033[?25l")      // hide cursor
 	fd := int(os.Stdin.Fd())
@@ -30,7 +30,7 @@ func setupTerminal() (*term.State, int, error) {
 	return oldState, fd, nil
 }
 
-func setupContent() ([][]rune, error) {
+func SetupContent() ([][]rune, error) {
 	cmd := exec.Command("tmux", "capture-pane", "-e", "-p")
 	out, err := cmd.Output()
 	if err != nil {

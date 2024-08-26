@@ -39,8 +39,7 @@ func (s *Snake) updateTermContent(y, x int) {
 			escapeSeq.WriteRune(s.TermContent[y][i])
 		} else if inEscapeSeq {
 			escapeSeq.WriteRune(s.TermContent[y][i])
-			if (s.TermContent[y][i] >= 'A' && s.TermContent[y][i] <= 'Z') ||
-				(s.TermContent[y][i] >= 'a' && s.TermContent[y][i] <= 'z') {
+			if isLetter(s.TermContent[y][i]) {
 				inEscapeSeq = false
 				if strings.Contains(escapeSeq.String(), "[3") || strings.Contains(escapeSeq.String(), "[38;5;") {
 					currentColor = escapeSeq.String()
@@ -57,6 +56,10 @@ func (s *Snake) updateTermContent(y, x int) {
 			actualX++
 		}
 	}
+}
+
+func isLetter(char rune) bool {
+	return char >= 'A' && char <= 'Z' || char >= 'a' && char <= 'z'
 }
 
 // the idea is to make keep two buffers; one that is actually printed and another
