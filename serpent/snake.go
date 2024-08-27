@@ -37,11 +37,11 @@ func InitSnake(speed float64, fx, fy int, rawContent [][]rune) *Snake {
 	// initialize snake with the head position and an empty tail
 	return &Snake{
 		head:        HEAD_R,
-		position:    utils.NewCoords(0, 0),
+		position:   utils.Coords{X: fx, Y: fy},
 		Speed:       speed,
 		// make tail with a length of 4 so that I don't have to figure out self collision logic ;P
 		tail:        make([]utils.Coords, 4), 
-		fieldSize:   utils.NewCoords(fx, fy),
+		fieldSize:   utils.Coords{X: fx, Y: fy},
 		TermContent: rawContent,
 		actualChars: stripAnsiCodes(rawContent),
 	}

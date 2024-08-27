@@ -1,5 +1,5 @@
 ## yummychars
-![snek go nom nom](./assets/demo_snake.gif)
+![snek go nom nom](../assets/demo_snake.gif)
 
 ## What is this?
 It's a silly game of snake in the terminal but with a twist; your current terminal

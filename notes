@@ -1,0 +1,9 @@
+* [32m975da59[39m [36m(willofdaedalus)[39m - [33mcharacter eating works fine without colours[39m [31mabout 28 minutes ago[39m [1m[32m (HEAD -> dev)[0m
+8-bit colour codes are basically \033[{code}m where {code} is an integer for 
+the colour code representing some colour e.g \033[30m paints the foreground of a
+cell black and \033[31m paints the foreground of cell red
+Check here https://gist.github.com/fnky/458719343aabd01cfb17a3a4f7296797#8-16-colors
+
+256-bit on the other is slightly different; \033[38;5;{code}m where again {code}
+is an integer between 0 and 255 inclusive. that only paints the foreground of the
+cell though

@@ -13,7 +13,7 @@ import (
 )
 
 var (
-	content    [][]rune
+	content    [][]utils.Cell
 	oldState   *term.State
 	sx, sy, fd int
 	err        error
@@ -24,7 +24,7 @@ func main() {
 		fmt.Println("please provide an argument. see help")
 		return
 	}
-	content, err = utils.SetupContent()
+	content, err = utils.RuneToCells()
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -58,8 +58,8 @@ func initApp(cmd string) (func(), error) {
 }
 
 func slideyEnvironment() {
-	s := slideys.InitSlideys(sx, sy, content)
-	s.PrintSlideyLeft()
+	// s := slideys.InitSlideys(sx, sy, content)
+	// s.PrintSlideyLeft()
 }
 
 func snakeEnvironment() {

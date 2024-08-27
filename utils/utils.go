@@ -30,7 +30,7 @@ func SetupTerminal() (*term.State, int, error) {
 	return oldState, fd, nil
 }
 
-func SetupContent() ([][]rune, error) {
+func GetTerminalContent() ([][]rune, error) {
 	cmd := exec.Command("tmux", "capture-pane", "-e", "-p")
 	out, err := cmd.Output()
 	if err != nil {
