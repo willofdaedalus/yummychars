@@ -64,7 +64,7 @@ func getCursorPosition() (int, int, error) {
 	res := string(buf[:n])
 
 	if strings.HasPrefix(res, "\033[") && strings.HasSuffix(res, "R") {
-		res = res[2:len(res) - 1]
+		res = res[2 : len(res)-1]
 		splits := strings.Split(res, ";")
 
 		if len(splits) == 2 {

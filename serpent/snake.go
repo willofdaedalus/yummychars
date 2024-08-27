@@ -2,6 +2,7 @@ package serpent
 
 import (
 	"fmt"
+	"willofdaedalus/yummychars/utils"
 )
 
 const (
@@ -19,10 +20,6 @@ const (
 	BODY   = 'o'
 )
 
-type coords struct {
-	x, y int
-}
-
 type Snake struct {
 	MoveDir     int
 	Speed       float64
@@ -31,20 +28,20 @@ type Snake struct {
 	colour      string
 	head        rune
 	actualChars [][]rune
-	position    coords
-	fieldSize   coords
-	tail        []coords
+	position    utils.Coords
+	fieldSize   utils.Coords
+	tail        []utils.Coords
 }
 
 func InitSnake(speed float64, fx, fy int, rawContent [][]rune) *Snake {
 	// initialize snake with the head position and an empty tail
 	return &Snake{
 		head:        HEAD_R,
-		position:    coords{0, 0},
+		position:    utils.NewCoords(0, 0),
 		Speed:       speed,
 		// make tail with a length of 4 so that I don't have to figure out self collision logic ;P
-		tail:        make([]coords, 4), 
-		fieldSize:   coords{fx, fy},
+		tail:        make([]utils.Coords, 4), 
+		fieldSize:   utils.NewCoords(fx, fy),
 		TermContent: rawContent,
 		actualChars: stripAnsiCodes(rawContent),
 	}
@@ -63,16 +60,16 @@ func (s *Snake) WinConditionLogic() bool {
 		}
 	}
 
-	fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "you win!")
+	fmt.Printf("\033[%d;%dH%s", s.fieldSize.Y/2, s.fieldSize.X/2, "you win!")
 	return true
 }
 
 func (s *Snake) CheckBoundaries() bool {
 	// allows the snake move along the boundaries without punishing the player
-	if (s.position.x > s.fieldSize.x + 1 || s.position.x < -1) ||
-		(s.position.y > s.fieldSize.y + 1 || s.position.y < -1) {
+	if (s.position.X > s.fieldSize.X + 1 || s.position.X < -1) ||
+		(s.position.Y > s.fieldSize.Y + 1 || s.position.Y < -1) {
 		s.ClearScreen()
-		fmt.Printf("\033[%d;%dH%s", s.fieldSize.y/2, s.fieldSize.x/2, "game over!")
+		fmt.Printf("\033[%d;%dH%s", s.fieldSize.Y/2, s.fieldSize.X/2, "game over!")
 		return true
 	}
 
@@ -93,45 +90,45 @@ func (s *Snake) MoveSnake(dir int) {
 	// update the head's position based on direction
 	switch dir {
 	case UP:
-		s.position.y -= 1
+		s.position.Y -= 1
 		s.head = HEAD_U
 	case DOWN:
-		s.position.y += 1
+		s.position.Y += 1
 		s.head = HEAD_D
 	case LEFT:
-		s.position.x -= 1
+		s.position.X -= 1
 		s.head = HEAD_L
 	case RIGHT:
-		s.position.x += 1
+		s.position.X += 1
 		s.head = HEAD_R
 	}
 
 	s.MoveDir = dir
 
-	if s.position.y >= 0 && s.position.y < len(s.actualChars) &&
-		s.position.x >= 0 && s.position.x < len(s.actualChars[s.position.y]) {
-		if s.actualChars[s.position.y][s.position.x] != ' ' {
-			s.actualChars[s.position.y][s.position.x] = ' '
+	if s.position.Y >= 0 && s.position.Y < len(s.actualChars) &&
+		s.position.X >= 0 && s.position.X < len(s.actualChars[s.position.Y]) {
+		if s.actualChars[s.position.Y][s.position.X] != ' ' {
+			s.actualChars[s.position.Y][s.position.X] = ' '
 
 			// update termcontent to reflect the change
-			s.updateTermContent(s.position.y, s.position.x)
+			s.updateTermContent(s.position.Y, s.position.X)
 		}
 	}
 }
 
 func (s *Snake) DrawScreenContent() {
 	// draw the captured terminal content
-	for y, line := range s.TermContent {
-		fmt.Printf("\033[%d;1H%s", y+1, string(line))
+	for Y, line := range s.TermContent {
+		fmt.Printf("\033[%d;1H%s", Y+1, string(line))
 	}
 }
 
 func (s *Snake) DrawSnake() {
 	// draw the head of the snake with the current colour
-	fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, s.position.y+1, s.position.x+1, s.head)
+	fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, s.position.Y+1, s.position.X+1, s.head)
 
 	// draw the tail of the snake with the current colour
 	for _, segment := range s.tail {
-		fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, segment.y+1, segment.x+1, BODY)
+		fmt.Printf("%s\033[%d;%dH%c\033[0m", s.colour, segment.Y+1, segment.X+1, BODY)
 	}
 }

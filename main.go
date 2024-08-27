@@ -6,6 +6,7 @@ import (
 	"os"
 	"time"
 	"willofdaedalus/yummychars/serpent"
+	"willofdaedalus/yummychars/slideys"
 	"willofdaedalus/yummychars/utils"
 
 	"golang.org/x/term"
@@ -49,9 +50,16 @@ func initApp(cmd string) (func(), error) {
 	switch cmd {
 	case "snake":
 		return snakeEnvironment, nil
+	case "slidey":
+		return slideyEnvironment, nil
 	}
 
 	return nil, fmt.Errorf("your command %s is not known. see help")
+}
+
+func slideyEnvironment() {
+	s := slideys.InitSlideys(sx, sy, content)
+	s.PrintSlideyLeft()
 }
 
 func snakeEnvironment() {
